@@ -302,8 +302,10 @@ body {
 }
 
 .summary-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: wrap;
     gap: var(--spacing-8);
     margin-top: var(--spacing-16);
     position: relative;
@@ -311,7 +313,6 @@ body {
     max-width: 1400px;
     margin-left: auto;
     margin-right: auto;
-    justify-items: center;
 }
 
 .summary-card {
@@ -328,8 +329,8 @@ body {
     position: relative;
     overflow: hidden;
     min-height: 280px;
-    width: 100%;
-    max-width: 420px;
+    width: 380px;
+    flex-shrink: 0;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
@@ -983,8 +984,11 @@ body {
     }
     
     .summary-cards {
-        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
         gap: var(--spacing-6);
+    }
+    
+    .summary-card {
+        width: 340px;
     }
     
     .header-content {
@@ -1027,7 +1031,8 @@ body {
     }
     
     .summary-cards {
-        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: center;
         gap: var(--spacing-6);
         margin-top: var(--spacing-12);
         max-width: 500px;
@@ -1036,7 +1041,8 @@ body {
     .summary-card {
         padding: var(--spacing-8);
         min-height: 240px;
-        max-width: none;
+        width: 100%;
+        max-width: 450px;
     }
     
     .dashboard {
@@ -1084,7 +1090,8 @@ body {
 /* Mobile Large */
 @media (max-width: 640px) {
     .summary-cards {
-        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: center;
         gap: var(--spacing-5);
         max-width: 400px;
     }
@@ -1092,6 +1099,8 @@ body {
     .summary-card {
         padding: var(--spacing-6);
         min-height: 220px;
+        width: 100%;
+        max-width: 380px;
     }
     
     .card-icon {
@@ -1144,6 +1153,8 @@ body {
     .summary-card {
         padding: var(--spacing-5);
         min-height: 200px;
+        width: 100%;
+        max-width: 350px;
     }
     
     .card-icon {
@@ -1197,6 +1208,8 @@ body {
     .summary-card {
         padding: var(--spacing-4);
         min-height: 180px;
+        width: 100%;
+        max-width: 320px;
     }
     
     .card-icon {
