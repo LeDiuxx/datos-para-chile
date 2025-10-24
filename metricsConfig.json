@@ -1,0 +1,292 @@
+{
+  "categories": {
+    "economia": {
+      "name": "Crecimiento Económico",
+      "icon": "📈",
+      "color": "#00D4AA",
+      "metrics": {
+        "pib_real": {
+          "name": "PIB Real",
+          "description": "Producto Interno Bruto en términos reales, ajustado por inflación",
+          "unit": "CLP millones",
+          "source": "Banco Central de Chile",
+          "api_url": "https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx",
+          "series_code": "F032.PIB.FLU.R.CLP.EP18.Z.Z.0.T",
+          "update_frequency": "trimestral",
+          "chart_type": "line",
+          "unit_economics": {
+            "formula": "PIB real / población",
+            "name": "PIB per cápita",
+            "unit": "CLP por habitante"
+          }
+        },
+        "pib_per_capita": {
+          "name": "PIB per Cápita",
+          "description": "PIB real dividido por la población total",
+          "unit": "CLP por habitante",
+          "source": "Banco Central de Chile + INE",
+          "derived_from": ["pib_real", "poblacion"],
+          "update_frequency": "trimestral",
+          "chart_type": "line"
+        },
+        "inversion_pib": {
+          "name": "Inversión (% PIB)",
+          "description": "Formación bruta de capital fijo como porcentaje del PIB",
+          "unit": "% del PIB",
+          "source": "Banco Central de Chile",
+          "api_url": "https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx",
+          "series_code": "F032.FBK.FLU.R.CLP.EP18.Z.Z.0.T",
+          "update_frequency": "trimestral",
+          "chart_type": "line"
+        },
+        "empleo_formal": {
+          "name": "Empleo Formal",
+          "description": "Número de trabajadores con contrato formal",
+          "unit": "Miles de personas",
+          "source": "INE Chile",
+          "api_url": "https://api.ine.cl/estadisticas/empleo",
+          "update_frequency": "mensual",
+          "chart_type": "line"
+        },
+        "desempleo": {
+          "name": "Tasa de Desempleo",
+          "description": "Porcentaje de la fuerza laboral que está desempleada",
+          "unit": "%",
+          "source": "INE Chile",
+          "api_url": "https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx",
+          "series_code": "F073.TCO.PRO.M.0.15_Y_MAS.T",
+          "update_frequency": "mensual",
+          "chart_type": "line"
+        },
+        "salario_minimo": {
+          "name": "Salario Mínimo Real",
+          "description": "Salario mínimo ajustado por inflación",
+          "unit": "CLP reales",
+          "source": "Ministerio del Trabajo",
+          "api_url": "https://datos.gob.cl/dataset/salario-minimo",
+          "update_frequency": "anual",
+          "chart_type": "bar"
+        },
+        "inflacion": {
+          "name": "Inflación (IPC)",
+          "description": "Variación anual del Índice de Precios al Consumidor",
+          "unit": "% anual",
+          "source": "INE Chile",
+          "api_url": "https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx",
+          "series_code": "F073.IPC.VAR.A.0.CLP.EP18.Z.Z.0.M",
+          "update_frequency": "mensual",
+          "chart_type": "line"
+        }
+      }
+    },
+    "bienestar": {
+      "name": "Bienestar y Equidad",
+      "icon": "🏠",
+      "color": "#4A9EFF",
+      "metrics": {
+        "pobreza_multidimensional": {
+          "name": "Pobreza Multidimensional",
+          "description": "Porcentaje de hogares en situación de pobreza multidimensional",
+          "unit": "% de hogares",
+          "source": "MIDESO",
+          "api_url": "https://datos.gob.cl/dataset/pobreza-multidimensional",
+          "update_frequency": "anual",
+          "chart_type": "bar"
+        },
+        "coeficiente_gini": {
+          "name": "Coeficiente de Gini",
+          "description": "Medida de desigualdad de ingresos (0=perfecta igualdad, 1=máxima desigualdad)",
+          "unit": "Índice 0-1",
+          "source": "CEPAL",
+          "api_url": "https://statistics.cepal.org/portal/cepalstat/api/",
+          "update_frequency": "anual",
+          "chart_type": "line",
+          "unit_economics": {
+            "formula": "(1 - Gini) × 100",
+            "name": "Tasa de Equidad",
+            "unit": "% de equidad"
+          }
+        },
+        "ingreso_medio_hogar": {
+          "name": "Ingreso Medio del Hogar",
+          "description": "Ingreso promedio mensual de los hogares chilenos",
+          "unit": "CLP mensuales",
+          "source": "INE - ESI",
+          "api_url": "https://api.ine.cl/estadisticas/ingresos",
+          "update_frequency": "anual",
+          "chart_type": "bar"
+        },
+        "participacion_laboral_femenina": {
+          "name": "Participación Laboral Femenina",
+          "description": "Porcentaje de mujeres en edad de trabajar que participan en el mercado laboral",
+          "unit": "% de mujeres",
+          "source": "INE Chile",
+          "api_url": "https://api.ine.cl/estadisticas/empleo",
+          "update_frequency": "trimestral",
+          "chart_type": "line"
+        },
+        "esperanza_vida": {
+          "name": "Esperanza de Vida",
+          "description": "Esperanza de vida al nacer en Chile",
+          "unit": "Años",
+          "source": "INE Chile",
+          "api_url": "https://api.ine.cl/estadisticas/demografia",
+          "update_frequency": "anual",
+          "chart_type": "line"
+        }
+      }
+    },
+    "seguridad": {
+      "name": "Seguridad Pública",
+      "icon": "🛡️",
+      "color": "#FF6B6B",
+      "metrics": {
+        "tasa_homicidios": {
+          "name": "Tasa de Homicidios",
+          "description": "Número de homicidios por cada 100,000 habitantes",
+          "unit": "Por 100k hab.",
+          "source": "Subsecretaría de Prevención del Delito",
+          "api_url": "https://datos.spd.gov.cl/api/homicidios",
+          "update_frequency": "mensual",
+          "chart_type": "line",
+          "unit_economics": {
+            "formula": "homicidios / población × 100000",
+            "name": "Homicidios per cápita",
+            "unit": "Por 100k habitantes"
+          }
+        },
+        "delitos_alta_connotacion": {
+          "name": "Delitos de Alta Connotación",
+          "description": "Robos con violencia, hurtos y otros delitos graves",
+          "unit": "Casos reportados",
+          "source": "Ministerio del Interior",
+          "api_url": "https://datos.gob.cl/dataset/delitos-alta-connotacion",
+          "update_frequency": "mensual",
+          "chart_type": "bar"
+        },
+        "percepcion_inseguridad": {
+          "name": "Percepción de Inseguridad",
+          "description": "Porcentaje de población que se siente insegura (ENUSC)",
+          "unit": "% población",
+          "source": "INE - ENUSC",
+          "api_url": "https://api.ine.cl/estadisticas/seguridad",
+          "update_frequency": "anual",
+          "chart_type": "bar"
+        }
+      }
+    },
+    "medioambiente": {
+      "name": "Medioambiente y Transición Ecológica",
+      "icon": "🌱",
+      "color": "#10B981",
+      "metrics": {
+        "emisiones_co2": {
+          "name": "Emisiones de CO₂",
+          "description": "Emisiones totales de gases de efecto invernadero",
+          "unit": "MtCO₂e",
+          "source": "Ministerio del Medio Ambiente",
+          "api_url": "https://snich.mma.gob.cl/api/emisiones",
+          "update_frequency": "anual",
+          "chart_type": "bar",
+          "unit_economics": {
+            "formula": "GEI totales / población",
+            "name": "Emisiones per cápita",
+            "unit": "tCO₂e por habitante"
+          }
+        },
+        "energia_renovable": {
+          "name": "Energía Renovable",
+          "description": "Porcentaje de energía renovable en la matriz energética",
+          "unit": "% de matriz",
+          "source": "Agencia de Sostenibilidad Energética",
+          "api_url": "https://datos.energia.gob.cl/api/renovables",
+          "update_frequency": "mensual",
+          "chart_type": "line"
+        },
+        "areas_protegidas": {
+          "name": "Áreas Protegidas",
+          "description": "Superficie total de áreas protegidas en Chile",
+          "unit": "Hectáreas",
+          "source": "CONAF",
+          "api_url": "https://datos.gob.cl/dataset/areas-protegidas",
+          "update_frequency": "anual",
+          "chart_type": "bar"
+        },
+        "consumo_agua": {
+          "name": "Consumo de Agua per Cápita",
+          "description": "Consumo promedio de agua por habitante",
+          "unit": "Litros/día/hab.",
+          "source": "DGA",
+          "api_url": "https://datos.gob.cl/dataset/consumo-agua",
+          "update_frequency": "anual",
+          "chart_type": "line"
+        }
+      }
+    },
+    "institucionalidad": {
+      "name": "Institucionalidad y Derechos Sociales",
+      "icon": "🏛️",
+      "color": "#8B5CF6",
+      "metrics": {
+        "cobertura_salud": {
+          "name": "Cobertura Salud Pública",
+          "description": "Porcentaje de población con cobertura de salud pública",
+          "unit": "% población",
+          "source": "MINSAL",
+          "api_url": "https://deis.minsal.cl/api/cobertura",
+          "update_frequency": "anual",
+          "chart_type": "bar",
+          "unit_economics": {
+            "formula": "beneficiarios / población objetivo",
+            "name": "Cobertura efectiva",
+            "unit": "% de cobertura"
+          }
+        },
+        "cobertura_educacion": {
+          "name": "Cobertura Educación Pública",
+          "description": "Porcentaje de estudiantes en educación pública",
+          "unit": "% estudiantes",
+          "source": "MINEDUC",
+          "api_url": "https://datosabiertos.mineduc.cl/api/cobertura",
+          "update_frequency": "anual",
+          "chart_type": "bar"
+        },
+        "participacion_electoral": {
+          "name": "Participación Electoral",
+          "description": "Porcentaje de participación en las últimas elecciones",
+          "unit": "% padrón",
+          "source": "SERVEL",
+          "api_url": "https://servel.cl/datos-abiertos/api/participacion",
+          "update_frequency": "electoral",
+          "chart_type": "bar",
+          "unit_economics": {
+            "formula": "votos válidos / padrón electoral",
+            "name": "Participación electoral",
+            "unit": "% de participación"
+          }
+        },
+        "confianza_instituciones": {
+          "name": "Confianza en Instituciones",
+          "description": "Índice de confianza ciudadana en instituciones públicas",
+          "unit": "Índice 1-10",
+          "source": "CEP - Encuesta Nacional",
+          "api_url": "https://datos.gob.cl/dataset/confianza-instituciones",
+          "update_frequency": "semestral",
+          "chart_type": "radar"
+        }
+      }
+    }
+  },
+  "global_config": {
+    "default_period": "2020-2024",
+    "cache_duration": 86400,
+    "fallback_csv_base": "https://datos.gob.cl/dataset/",
+    "update_schedule": {
+      "daily": ["inflacion", "tasa_homicidios"],
+      "weekly": ["empleo_formal", "delitos_alta_connotacion"],
+      "monthly": ["pib_real", "desempleo", "energia_renovable"],
+      "quarterly": ["participacion_laboral_femenina"],
+      "annual": ["pobreza_multidimensional", "coeficiente_gini", "esperanza_vida"]
+    }
+  }
+}
