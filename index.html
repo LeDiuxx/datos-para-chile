@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datos para Chile - Dashboard de Desempeño Gubernamental</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+</head>
+<body>
+    <!-- Header con branding -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🇨🇱</div>
+                    <div class="logo-text">
+                        <h1>Datos para Chile</h1>
+                        <p>Transparencia en el desempeño gubernamental</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-secondary" id="testAPIButton">
+                        🧪 Probar API
+                    </button>
+                    <button class="btn-secondary" id="dataSourceToggle">
+                        🔄 Datos: Simulados
+                    </button>
+                    <button class="btn-secondary" id="periodSelector">
+                        📅 Período: 2022-2026
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Resumen ejecutivo -->
+    <section class="executive-summary">
+        <div class="container">
+            <h2>¿Cómo va nuestro Presidente?</h2>
+            <p class="subtitle">Evaluación simple y transparente del cumplimiento de promesas y gestión económica</p>
+            
+            <div class="summary-cards">
+                <div class="summary-card excellent">
+                    <div class="card-icon">📈</div>
+                    <div class="card-content">
+                        <h3>Economía</h3>
+                        <div class="score">7.2/10</div>
+                        <p>Crecimiento estable, inflación controlada</p>
+                    </div>
+                </div>
+                
+                <div class="summary-card warning">
+                    <div class="card-icon">👥</div>
+                    <div class="card-content">
+                        <h3>Empleo</h3>
+                        <div class="score">6.1/10</div>
+                        <p>Desempleo en descenso lento</p>
+                    </div>
+                </div>
+                
+                <div class="summary-card good">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-content">
+                        <h3>Promesas</h3>
+                        <div class="score">65%</div>
+                        <p>23 de 35 promesas en progreso</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard principal -->
+    <main class="dashboard">
+        <div class="container">
+            <!-- Información sobre API -->
+            <div class="api-info-section" style="background: var(--bg-elevated); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); padding: var(--spacing-6); margin-bottom: var(--spacing-8);">
+                <div style="display: flex; align-items: center; gap: var(--spacing-3); margin-bottom: var(--spacing-4);">
+                    <span style="font-size: 20px;">ℹ️</span>
+                    <h3 style="margin: 0; color: var(--text-primary);">Estado de la API del Banco Central</h3>
+                </div>
+                <p style="margin: 0; color: var(--text-secondary); font-size: var(--font-size-sm); line-height: 1.5;">
+                    <strong>Solución implementada:</strong> Hemos creado un servidor proxy local para conectar con la API del Banco Central. 
+                    <strong>Haz clic en "🧪 Probar API"</strong> para verificar la conexión (te guiaremos si necesitas activar el proxy).
+                </p>
+            </div>
+
+            <!-- Controles de período -->
+            <div class="controls-section">
+                <h3>Configurar período de análisis</h3>
+                <div class="period-controls">
+                    <div class="date-inputs">
+                        <label>Desde:</label>
+                        <input type="month" id="startDate" value="2022-03">
+                        <label>Hasta:</label>
+                        <input type="month" id="endDate" value="2024-10">
+                    </div>
+                    <div class="preset-periods">
+                        <button class="period-btn active" data-period="government">Todo el Gobierno</button>
+                        <button class="period-btn" data-period="year">Último Año</button>
+                        <button class="period-btn" data-period="quarter">Último Trimestre</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos económicos -->
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>🏭 Crecimiento Económico</h3>
+                        <p>¿Está creciendo la economía chilena?</p>
+                        <div class="chart-controls">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="growthTrend" checked>
+                                <span>Mostrar tendencia</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                    <div class="chart-insight">
+                        <span class="insight-icon">💡</span>
+                        <p>La economía creció 2.3% el último trimestre, superando expectativas.</p>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>💼 Desempleo</h3>
+                        <p>¿Cuántos chilenos no tienen trabajo?</p>
+                        <div class="chart-controls">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="unemploymentTrend" checked>
+                                <span>Mostrar tendencia</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="unemploymentChart"></canvas>
+                    </div>
+                    <div class="chart-insight">
+                        <span class="insight-icon">⚠️</span>
+                        <p>El desempleo bajó a 8.1%, pero aún está sobre la meta del 7%.</p>
+                    </div>
+                </div>
+
+                <div class="chart-container full-width">
+                    <div class="chart-header">
+                        <h3>🛒 Inflación (IPC)</h3>
+                        <p>¿Cuánto han subido los precios?</p>
+                        <div class="chart-controls">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="inflationTrend" checked>
+                                <span>Mostrar tendencia</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="inflationChart"></canvas>
+                    </div>
+                    <div class="chart-insight">
+                        <span class="insight-icon">✅</span>
+                        <p>La inflación está en 3.2%, dentro del rango meta del Banco Central (2-4%).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de promesas presidenciales -->
+            <div class="promises-section">
+                <h2>📋 Promesas del Presidente</h2>
+                <p class="subtitle">¿Está cumpliendo lo que prometió en campaña?</p>
+                
+                <div class="promises-summary">
+                    <div class="promise-stat completed">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Cumplidas</div>
+                    </div>
+                    <div class="promise-stat in-progress">
+                        <div class="stat-number">23</div>
+                        <div class="stat-label">En progreso</div>
+                    </div>
+                    <div class="promise-stat pending">
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">Sin avance</div>
+                    </div>
+                </div>
+
+                <div class="promises-list">
+                    <div class="promise-item completed">
+                        <div class="promise-status">✅</div>
+                        <div class="promise-content">
+                            <h4>Aumentar pensión básica solidaria</h4>
+                            <p>Cumplida - Aumento de $15.000 implementado en enero 2023</p>
+                        </div>
+                        <div class="promise-progress">100%</div>
+                    </div>
+
+                    <div class="promise-item in-progress">
+                        <div class="promise-status">🔄</div>
+                        <div class="promise-content">
+                            <h4>Construir 260.000 viviendas</h4>
+                            <p>En progreso - 89.000 viviendas construidas hasta octubre 2024</p>
+                        </div>
+                        <div class="promise-progress">34%</div>
+                    </div>
+
+                    <div class="promise-item in-progress">
+                        <div class="promise-status">🔄</div>
+                        <div class="promise-content">
+                            <h4>Reducir listas de espera en salud</h4>
+                            <p>En progreso - Reducción del 15% en cirugías electivas</p>
+                        </div>
+                        <div class="promise-progress">45%</div>
+                    </div>
+
+                    <div class="promise-item pending">
+                        <div class="promise-status">⏳</div>
+                        <div class="promise-content">
+                            <h4>Reforma tributaria</h4>
+                            <p>Sin avance - Proyecto aún no ingresado al Congreso</p>
+                        </div>
+                        <div class="promise-progress">5%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Datos para Chile</h4>
+                    <p>Plataforma ciudadana de transparencia gubernamental</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Fuentes de datos</h4>
+                    <ul>
+                        <li>Banco Central de Chile</li>
+                        <li>Instituto Nacional de Estadísticas (INE)</li>
+                        <li>Ministerio de Hacienda</li>
+                        <li>Seguimiento de promesas presidenciales</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <p>¿Tienes sugerencias? Escríbenos para mejorar esta plataforma</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Datos para Chile - Información pública para todos los chilenos</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

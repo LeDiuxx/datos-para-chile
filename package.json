@@ -1,0 +1,35 @@
+{
+  "name": "datos-para-chile",
+  "version": "1.0.0",
+  "description": "Dashboard de transparencia gubernamental para Chile",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'No build step required for static files'",
+    "test": "echo 'No tests specified'"
+  },
+  "keywords": [
+    "chile",
+    "gobierno",
+    "transparencia",
+    "datos",
+    "dashboard",
+    "banco-central"
+  ],
+  "author": "Vicente Caridi",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/usuario/datos-para-chile.git"
+  }
+}
