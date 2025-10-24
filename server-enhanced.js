@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs').promises;
+const axios = require('axios');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -81,12 +82,8 @@ class ServerAPIManager {
 
         const url = `https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx?${params.toString()}`;
         
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const data = await response.json();
+        const response = await axios.get(url);
+        const data = response.data;
         
         if (!data.Series?.Obs) {
             return [];
@@ -282,18 +279,8 @@ app.get('/api/bcentral', async (req, res) => {
         const fullBcentralUrl = `${bcentralApiBaseURL}?${queryParams.toString()}`;
         console.log(`Proxying request to: ${fullBcentralUrl}`);
 
-        const response = await fetch(fullBcentralUrl);
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`Error from Banco Central API: ${response.status} - ${errorText}`);
-            return res.status(response.status).json({ 
-                Codigo: -response.status, 
-                Descripcion: `Banco Central API error: ${errorText}` 
-            });
-        }
-
-        const data = await response.json();
+        const response = await axios.get(fullBcentralUrl);
+        const data = response.data;
         res.json(data);
 
     } catch (error) {

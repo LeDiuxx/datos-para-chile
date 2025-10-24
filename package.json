@@ -4,8 +4,9 @@
   "description": "Dashboard de transparencia gubernamental para Chile",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
+    "start": "node server-enhanced.js",
+    "dev": "node server-enhanced.js",
+    "legacy": "node server.js",
     "build": "echo 'No build step required for static files'",
     "test": "echo 'No tests specified'"
   },
