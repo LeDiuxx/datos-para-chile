@@ -303,36 +303,46 @@ body {
 
 .summary-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-6);
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: var(--spacing-8);
     margin-top: var(--spacing-16);
     position: relative;
     z-index: 1;
-    max-width: 1000px;
+    max-width: 1400px;
     margin-left: auto;
     margin-right: auto;
+    justify-items: center;
 }
 
 .summary-card {
     background: var(--bg-elevated);
     border: 1px solid var(--border-primary);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-8);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-10) var(--spacing-8);
     display: flex;
+    flex-direction: column;
     align-items: center;
+    text-align: center;
     gap: var(--spacing-6);
     transition: all var(--transition-normal);
     position: relative;
     overflow: hidden;
+    min-height: 280px;
+    width: 100%;
+    max-width: 420px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .summary-card::before {
     content: '';
     position: absolute;
     top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    border-radius: 0 0 4px 4px;
     transition: all var(--transition-normal);
 }
 
@@ -343,15 +353,15 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+    background: radial-gradient(circle at center top, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
     pointer-events: none;
     opacity: 0;
     transition: opacity var(--transition-normal);
 }
 
 .summary-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
     border-color: var(--border-hover);
 }
 
@@ -392,41 +402,47 @@ body {
 }
 
 .card-icon {
-    font-size: var(--font-size-2xl);
-    opacity: 0.8;
-    margin-top: var(--spacing-1);
+    font-size: var(--font-size-4xl);
+    opacity: 0.9;
     flex-shrink: 0;
-    width: 40px;
-    height: 40px;
+    width: 80px;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius);
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
+    border-radius: var(--radius-xl);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    margin-bottom: var(--spacing-2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .card-content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-1);
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    gap: var(--spacing-2);
 }
 
 .card-content h3 {
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
     color: var(--text-secondary);
     margin: 0;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
 .score {
-    font-size: var(--font-size-3xl);
+    font-size: var(--font-size-5xl);
     font-weight: var(--font-weight-bold);
-    margin: var(--spacing-1) 0;
+    margin: var(--spacing-2) 0;
     line-height: 1;
+    color: var(--text-primary);
 }
 
 .excellent .score {
@@ -447,10 +463,12 @@ body {
 
 .card-content p {
     color: var(--text-tertiary);
-    font-size: var(--font-size-sm);
-    line-height: 1.4;
+    font-size: var(--font-size-base);
+    line-height: 1.5;
     margin: 0;
     font-weight: var(--font-weight-normal);
+    max-width: 300px;
+    padding: 0 var(--spacing-2);
 }
 
 /* Dashboard - Modern Layout */
@@ -965,8 +983,8 @@ body {
     }
     
     .summary-cards {
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: var(--spacing-5);
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: var(--spacing-6);
     }
     
     .header-content {
@@ -1009,14 +1027,16 @@ body {
     }
     
     .summary-cards {
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: var(--spacing-4);
+        grid-template-columns: 1fr;
+        gap: var(--spacing-6);
         margin-top: var(--spacing-12);
+        max-width: 500px;
     }
     
     .summary-card {
-        padding: var(--spacing-6);
-        gap: var(--spacing-4);
+        padding: var(--spacing-8);
+        min-height: 240px;
+        max-width: none;
     }
     
     .dashboard {
@@ -1065,20 +1085,19 @@ body {
 @media (max-width: 640px) {
     .summary-cards {
         grid-template-columns: 1fr;
-        gap: var(--spacing-4);
+        gap: var(--spacing-5);
+        max-width: 400px;
     }
     
     .summary-card {
-        flex-direction: row;
-        align-items: center;
-        text-align: left;
-        padding: var(--spacing-5);
+        padding: var(--spacing-6);
+        min-height: 220px;
     }
     
     .card-icon {
-        width: 48px;
-        height: 48px;
-        flex-shrink: 0;
+        width: 60px;
+        height: 60px;
+        font-size: var(--font-size-3xl);
     }
     
     .chart-wrapper {
@@ -1123,18 +1142,18 @@ body {
     }
     
     .summary-card {
-        padding: var(--spacing-4);
-        gap: var(--spacing-3);
+        padding: var(--spacing-5);
+        min-height: 200px;
     }
     
     .card-icon {
-        width: 40px;
-        height: 40px;
-        font-size: var(--font-size-xl);
+        width: 50px;
+        height: 50px;
+        font-size: var(--font-size-2xl);
     }
     
     .score {
-        font-size: var(--font-size-2xl);
+        font-size: var(--font-size-4xl);
     }
     
     .chart-container {
@@ -1176,14 +1195,14 @@ body {
     }
     
     .summary-card {
-        padding: var(--spacing-3);
-        gap: var(--spacing-2);
+        padding: var(--spacing-4);
+        min-height: 180px;
     }
     
     .card-icon {
-        width: 36px;
-        height: 36px;
-        font-size: var(--font-size-lg);
+        width: 45px;
+        height: 45px;
+        font-size: var(--font-size-xl);
     }
     
     .card-content h3 {
