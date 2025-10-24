@@ -68,8 +68,8 @@ let charts = {};
 let useRealAPI = false; // Por defecto usar datos simulados
 
 // Inicialización cuando se carga la página
-document.addEventListener('DOMContentLoaded', function() {
-    initializeCharts();
+document.addEventListener('DOMContentLoaded', async function() {
+    await initializeCharts();
     setupEventListeners();
     updatePeriodDisplay();
 });
@@ -249,16 +249,24 @@ function updatePeriodDisplay() {
 }
 
 // Inicializar todos los gráficos
-function initializeCharts() {
-    createChart('growthChart', 'growth', 'Crecimiento del PIB (%)', 'line', '#10B981');
-    createChart('unemploymentChart', 'unemployment', 'Tasa de Desempleo (%)', 'line', '#F59E0B');
-    createChart('inflationChart', 'inflation', 'Inflación Anual (%)', 'line', '#EF4444');
+async function initializeCharts() {
+    await Promise.all([
+        createChart('growthChart', 'growth', 'Crecimiento del PIB (%)', 'line', '#10B981'),
+        createChart('unemploymentChart', 'unemployment', 'Tasa de Desempleo (%)', 'line', '#F59E0B'),
+        createChart('inflationChart', 'inflation', 'Inflación Anual (%)', 'line', '#EF4444')
+    ]);
 }
 
 // Crear un gráfico individual con tema oscuro
-function createChart(canvasId, dataKey, label, type, color) {
+async function createChart(canvasId, dataKey, label, type, color) {
     const ctx = document.getElementById(canvasId).getContext('2d');
-    const data = filterDataByPeriod(mockData[dataKey]);
+    
+    // Obtener fechas actuales para datos iniciales
+    const startDate = document.getElementById('startDate').value || '2022-03';
+    const endDate = document.getElementById('endDate').value || formatDateToMonth(new Date());
+    
+    // Obtener datos (reales o simulados)
+    const data = await getData(dataKey, startDate, endDate, useRealAPI);
     
     // Configuración de colores para dark theme
     const darkThemeColors = {
@@ -403,6 +411,11 @@ async function updateChart(dataKey) {
     }
     
     charts[dataKey].update('active');
+    
+    // Actualizar las cards de resumen con los datos más recientes
+    if (data.length > 0) {
+        updateSummaryCard(dataKey, data);
+    }
 }
 
 // Actualizar todos los gráficos con nueva fuente de datos
@@ -428,7 +441,7 @@ async function updateChartsWithNewData() {
         ]);
         
         // Actualizar insights con los nuevos datos
-        updateInsights();
+        await updateInsights();
         
     } catch (error) {
         console.error('Error actualizando gráficos:', error);
@@ -826,16 +839,165 @@ async function getData(dataType, startDate, endDate, useRealAPI = false) {
     return filterDataByPeriod(mockData[dataType] || []);
 }
 
-// Función para actualizar insights automáticamente
-function updateInsights() {
-    const latestGrowth = mockData.growth[mockData.growth.length - 1];
-    const latestUnemployment = mockData.unemployment[mockData.unemployment.length - 1];
-    const latestInflation = mockData.inflation[mockData.inflation.length - 1];
+// Función para actualizar las cards de resumen con datos reales
+function updateSummaryCard(dataKey, data) {
+    if (!data || data.length === 0) return;
     
-    // Actualizar insights basados en los últimos datos
-    updateInsightText('growth', latestGrowth.value, 'crecimiento');
-    updateInsightText('unemployment', latestUnemployment.value, 'desempleo');
-    updateInsightText('inflation', latestInflation.value, 'inflación');
+    const latestData = data[data.length - 1];
+    const previousData = data.length > 1 ? data[data.length - 2] : null;
+    
+    // Mapeo de tipos de datos a elementos del DOM
+    const cardMapping = {
+        growth: {
+            scoreElement: document.querySelector('.summary-card.excellent .score'),
+            descElement: document.querySelector('.summary-card.excellent .card-content p'),
+            cardElement: document.querySelector('.summary-card.excellent'),
+            unit: '%',
+            label: 'Crecimiento económico'
+        },
+        unemployment: {
+            scoreElement: document.querySelector('.summary-card.warning .score'),
+            descElement: document.querySelector('.summary-card.warning .card-content p'),
+            cardElement: document.querySelector('.summary-card.warning'),
+            unit: '%',
+            label: 'Tasa de desempleo'
+        },
+        inflation: {
+            scoreElement: document.querySelector('.summary-card.good .score'),
+            descElement: document.querySelector('.summary-card.good .card-content p'),
+            cardElement: document.querySelector('.summary-card.good'),
+            unit: '%',
+            label: 'Inflación anual'
+        }
+    };
+    
+    const mapping = cardMapping[dataKey];
+    if (!mapping || !mapping.scoreElement) return;
+    
+    // Actualizar el valor principal
+    const value = latestData.value;
+    mapping.scoreElement.textContent = `${value.toFixed(1)}${mapping.unit}`;
+    
+    // Calcular tendencia si hay datos previos
+    let trendText = '';
+    if (previousData) {
+        const change = value - previousData.value;
+        const isPositive = change > 0;
+        const changeText = Math.abs(change).toFixed(1);
+        
+        // Para desempleo e inflación, una disminución es positiva
+        const isGoodTrend = (dataKey === 'unemployment' || dataKey === 'inflation') ? !isPositive : isPositive;
+        
+        trendText = `${isGoodTrend ? '📈' : '📉'} ${isPositive ? '+' : '-'}${changeText}% vs período anterior`;
+    }
+    
+    // Generar descripción contextual
+    let description = '';
+    switch (dataKey) {
+        case 'growth':
+            if (value >= 3.0) {
+                description = `Crecimiento robusto, ${trendText}`;
+                updateCardClass(mapping.cardElement, 'excellent');
+            } else if (value >= 1.5) {
+                description = `Crecimiento moderado, ${trendText}`;
+                updateCardClass(mapping.cardElement, 'good');
+            } else if (value >= 0) {
+                description = `Crecimiento lento, ${trendText}`;
+                updateCardClass(mapping.cardElement, 'warning');
+            } else {
+                description = `Economía en contracción, ${trendText}`;
+                updateCardClass(mapping.cardElement, 'danger');
+            }
+            break;
+            
+        case 'unemployment':
+            if (value <= 6.0) {
+                description = `Desempleo bajo, ${trendText}`;
+                updateCardClass(mapping.cardElement, 'excellent');
+            } else if (value <= 8.0) {
+                description = `Desempleo moderado, ${trendText}`;
+                updateCardClass(mapping.cardElement, 'good');
+            } else if (value <= 10.0) {
+                description = `Desempleo elevado, ${trendText}`;
+                updateCardClass(mapping.cardElement, 'warning');
+            } else {
+                description = `Desempleo crítico, ${trendText}`;
+                updateCardClass(mapping.cardElement, 'danger');
+            }
+            break;
+            
+        case 'inflation':
+            if (value <= 3.0) {
+                description = `Inflación controlada, ${trendText}`;
+                updateCardClass(mapping.cardElement, 'excellent');
+            } else if (value <= 5.0) {
+                description = `Inflación moderada, ${trendText}`;
+                updateCardClass(mapping.cardElement, 'good');
+            } else if (value <= 8.0) {
+                description = `Inflación elevada, ${trendText}`;
+                updateCardClass(mapping.cardElement, 'warning');
+            } else {
+                description = `Inflación crítica, ${trendText}`;
+                updateCardClass(mapping.cardElement, 'danger');
+            }
+            break;
+    }
+    
+    // Actualizar descripción
+    if (mapping.descElement) {
+        mapping.descElement.textContent = description;
+    }
+    
+    console.log(`✅ Card actualizada: ${dataKey} = ${value.toFixed(1)}% - ${description}`);
+}
+
+// Función auxiliar para actualizar la clase de la card
+function updateCardClass(cardElement, newClass) {
+    if (!cardElement) return;
+    
+    // Remover clases de estado existentes
+    cardElement.classList.remove('excellent', 'good', 'warning', 'danger');
+    // Agregar nueva clase
+    cardElement.classList.add(newClass);
+}
+
+// Función para actualizar insights automáticamente
+async function updateInsights() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    
+    try {
+        // Obtener datos más recientes (reales o simulados)
+        const growthData = await getData('growth', startDate, endDate, useRealAPI);
+        const unemploymentData = await getData('unemployment', startDate, endDate, useRealAPI);
+        const inflationData = await getData('inflation', startDate, endDate, useRealAPI);
+        
+        if (growthData.length > 0) {
+            const latestGrowth = growthData[growthData.length - 1];
+            updateInsightText('growth', latestGrowth.value, 'crecimiento');
+        }
+        
+        if (unemploymentData.length > 0) {
+            const latestUnemployment = unemploymentData[unemploymentData.length - 1];
+            updateInsightText('unemployment', latestUnemployment.value, 'desempleo');
+        }
+        
+        if (inflationData.length > 0) {
+            const latestInflation = inflationData[inflationData.length - 1];
+            updateInsightText('inflation', latestInflation.value, 'inflación');
+        }
+        
+    } catch (error) {
+        console.error('Error actualizando insights:', error);
+        // Fallback a datos simulados
+        const latestGrowth = mockData.growth[mockData.growth.length - 1];
+        const latestUnemployment = mockData.unemployment[mockData.unemployment.length - 1];
+        const latestInflation = mockData.inflation[mockData.inflation.length - 1];
+        
+        updateInsightText('growth', latestGrowth.value, 'crecimiento');
+        updateInsightText('unemployment', latestUnemployment.value, 'desempleo');
+        updateInsightText('inflation', latestInflation.value, 'inflación');
+    }
 }
 
 // Actualizar texto de insights
