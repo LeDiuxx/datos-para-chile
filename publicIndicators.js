@@ -118,12 +118,6 @@ class PublicIndicatorsModule {
                 ${this.createMetricsCards(category.metrics)}
             </div>
             
-            <div class="unit-economics-section" id="unitEconomicsSection">
-                <h4>📈 Unit Economics Calculados</h4>
-                <div class="unit-economics-grid" id="unitEconomicsGrid">
-                    ${this.createUnitEconomicsCards(category.metrics)}
-                </div>
-            </div>
         `;
     }
 
@@ -168,29 +162,6 @@ class PublicIndicatorsModule {
         `).join('');
     }
 
-    createUnitEconomicsCards(metrics) {
-        const unitEconomicsMetrics = Object.entries(metrics)
-            .filter(([key, metric]) => metric.unit_economics)
-            .map(([key, metric]) => `
-                <div class="unit-economics-card" data-metric="${key}-unit">
-                    <div class="unit-header">
-                        <h5>${metric.unit_economics.name}</h5>
-                        <span class="formula-badge">📐 ${metric.unit_economics.formula}</span>
-                    </div>
-                    <div class="unit-value" id="unitValue-${key}">
-                        <span class="calculated-value">--</span>
-                        <span class="unit">${metric.unit_economics.unit}</span>
-                    </div>
-                    <div class="unit-trend" id="unitTrend-${key}">
-                        <span class="trend-indicator">--</span>
-                        <span class="trend-text">Calculando tendencia...</span>
-                    </div>
-                </div>
-            `);
-
-        return unitEconomicsMetrics.length > 0 ? unitEconomicsMetrics.join('') : 
-            '<div class="no-unit-economics">No hay métricas de Unit Economics para esta categoría</div>';
-    }
 
     setupEventListeners() {
         // Tabs de categorías
@@ -250,8 +221,6 @@ class PublicIndicatorsModule {
 
         await Promise.all(loadPromises);
         
-        // Calcular Unit Economics después de cargar datos base
-        this.calculateUnitEconomics(categoryKey);
         
         console.log(`✅ Datos cargados para categoría: ${category.name}`);
     }
@@ -426,70 +395,6 @@ class PublicIndicatorsModule {
         this.charts.set(metricKey, chart);
     }
 
-    calculateUnitEconomics(categoryKey) {
-        const category = this.config.categories[categoryKey];
-        
-        Object.entries(category.metrics).forEach(([metricKey, metric]) => {
-            if (metric.unit_economics) {
-                try {
-                    const calculatedValue = this.performUnitEconomicsCalculation(metricKey, metric);
-                    this.updateUnitEconomicsUI(metricKey, calculatedValue, metric.unit_economics);
-                } catch (error) {
-                    console.error(`Error calculando Unit Economics para ${metricKey}:`, error);
-                }
-            }
-        });
-    }
-
-    performUnitEconomicsCalculation(metricKey, metric) {
-        const cachedData = this.cache.get(metricKey);
-        if (!cachedData) return null;
-
-        const latestValue = cachedData.data[cachedData.data.length - 1];
-        
-        // Implementar cálculos específicos según la fórmula
-        switch (metric.unit_economics.formula) {
-            case 'PIB real / población':
-                // Necesitaríamos datos de población
-                return latestValue.value / 19500000; // Población aproximada de Chile
-                
-            case '(1 - Gini) × 100':
-                return (1 - latestValue.value) * 100;
-                
-            case 'homicidios / población × 100000':
-                return (latestValue.value / 19500000) * 100000;
-                
-            case 'GEI totales / población':
-                return latestValue.value / 19500000;
-                
-            default:
-                return latestValue.value;
-        }
-    }
-
-    updateUnitEconomicsUI(metricKey, calculatedValue, unitEconomics) {
-        const valueElement = document.getElementById(`unitValue-${metricKey}`);
-        if (valueElement && calculatedValue !== null) {
-            const calculatedValueSpan = valueElement.querySelector('.calculated-value');
-            calculatedValueSpan.textContent = this.formatValue(calculatedValue, unitEconomics.unit);
-        }
-
-        // Calcular y mostrar tendencia
-        this.updateUnitEconomicsTrend(metricKey, calculatedValue);
-    }
-
-    updateUnitEconomicsTrend(metricKey, currentValue) {
-        // Implementar cálculo de tendencia comparando con períodos anteriores
-        const trendElement = document.getElementById(`unitTrend-${metricKey}`);
-        if (trendElement) {
-            // Por ahora, mostrar valor estático
-            const trendIndicator = trendElement.querySelector('.trend-indicator');
-            const trendText = trendElement.querySelector('.trend-text');
-            
-            trendIndicator.textContent = '📈';
-            trendText.textContent = 'Tendencia calculada';
-        }
-    }
 
     updateMetricStatus(metricKey, status, message) {
         const statusElement = document.getElementById(`status-${metricKey}`);
@@ -562,8 +467,7 @@ class PublicIndicatorsModule {
         const metric = category.metrics[metricKey];
         
         if (metric) {
-            await this.loadMetricData(metricKey, metric);
-            this.calculateUnitEconomics(this.activeCategory);
+        await this.loadMetricData(metricKey, metric);
         }
     }
 
@@ -886,79 +790,6 @@ class PublicIndicatorsModule {
                 color: var(--text-primary);
             }
 
-            .unit-economics-section {
-                margin-top: var(--spacing-16);
-                padding-top: var(--spacing-16);
-                border-top: 1px solid var(--border-primary);
-            }
-
-            .unit-economics-section h4 {
-                font-size: var(--font-size-xl);
-                font-weight: var(--font-weight-semibold);
-                color: var(--text-primary);
-                margin-bottom: var(--spacing-8);
-                text-align: center;
-            }
-
-            .unit-economics-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: var(--spacing-6);
-            }
-
-            .unit-economics-card {
-                background: var(--bg-secondary);
-                border: 1px solid var(--border-secondary);
-                border-radius: var(--radius-lg);
-                padding: var(--spacing-6);
-                text-align: center;
-            }
-
-            .unit-header {
-                margin-bottom: var(--spacing-4);
-            }
-
-            .unit-header h5 {
-                font-size: var(--font-size-base);
-                font-weight: var(--font-weight-semibold);
-                color: var(--text-primary);
-                margin: 0 0 var(--spacing-2) 0;
-            }
-
-            .formula-badge {
-                background: var(--accent-primary);
-                color: white;
-                padding: var(--spacing-1) var(--spacing-3);
-                border-radius: var(--radius);
-                font-size: var(--font-size-xs);
-                font-weight: var(--font-weight-medium);
-            }
-
-            .unit-value {
-                margin-bottom: var(--spacing-4);
-            }
-
-            .calculated-value {
-                font-size: var(--font-size-2xl);
-                font-weight: var(--font-weight-bold);
-                color: var(--accent-primary);
-            }
-
-            .unit-trend {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: var(--spacing-2);
-                font-size: var(--font-size-sm);
-                color: var(--text-secondary);
-            }
-
-            .no-unit-economics {
-                text-align: center;
-                color: var(--text-tertiary);
-                font-style: italic;
-                padding: var(--spacing-8);
-            }
 
             /* Responsive */
             @media (max-width: 768px) {
